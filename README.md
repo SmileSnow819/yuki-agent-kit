@@ -9,6 +9,14 @@
 在目标项目根目录执行，安装接入 Skill：
 
 ```sh
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+```
+
+这条通用命令会提示你选择正在使用的 AI 工具。
+
+如果只使用 Codex，希望跳过交互选择，执行：
+
+```sh
 npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
@@ -41,12 +49,12 @@ npx skills add ~/Developer/yuki-agent-kit-cache --skill yuki-agent-kit --agent c
 
 已有项目：在项目根目录执行上述安装命令，再与 AI 对话。
 
-新项目：先创建并进入空目录，再执行相同的安装命令。
+新项目：先创建并进入空目录，再执行通用或 Codex 专用安装命令。
 
 ```sh
 mkdir my-app
 cd my-app
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
 ```
 
 告诉 AI 产品目标、用户和技术栈，它会依据你提供的信息完善新建模板；目录尚无 Git 仓库时，初始化脚本会执行 `git init`。

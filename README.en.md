@@ -9,6 +9,14 @@ Let an AI agent add product context, Agent rules, decision records, Git Hooks, a
 Run this in the target project root to install the onboarding skill:
 
 ```sh
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+```
+
+This generic command prompts you to select the AI tool you use.
+
+If you use Codex only and want to skip interactive selection, run:
+
+```sh
 npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
@@ -41,12 +49,12 @@ A local source does not require GitHub access. When connected, run `git pull --f
 
 Existing project: run the installation command above in the project root, then talk to your AI agent.
 
-New project: create and enter an empty directory, then run the same installation command.
+New project: create and enter an empty directory, then run either the generic or Codex-specific installation command.
 
 ```sh
 mkdir my-app
 cd my-app
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
 ```
 
 Tell the agent the product goal, users, and technology stack so it can fill in newly created templates using your information. The initialization script runs `git init` if the directory has no Git repository.
