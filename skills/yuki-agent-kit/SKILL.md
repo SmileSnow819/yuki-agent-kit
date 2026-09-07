@@ -11,14 +11,18 @@ description: 在用户要求给新项目或已有项目接入 yuki-agent-kit、�
 
 1. 确认用户指定的目标目录；未指定时使用当前项目根目录。读取已有 `AGENTS.md`、`PRODUCT.md`、Agent Notes、Git 状态和 hooks 配置。新项目只有在用户要求创建时才创建目录。
 2. 告知接入会补齐缺失的产品说明、Agent 规则、Notes 和 hooks；默认 `commit-msg` 校验带类型前缀的中文主题，`pre-push` 是待配置的空模板。若与项目约定不兼容，先讨论相应集成。
-3. 从**当前加载的本 Skill 目录**定位 [scripts/init-project.sh](scripts/init-project.sh)，运行下面的命令。先将示例中的路径替换成实际绝对路径，不要从业务项目猜测源码仓库的位置。
+3. 从**当前加载的本 Skill 目录**定位 [scripts/init-project.sh](scripts/init-project.sh)，运行下面的命令。先将示例中的路径替换成实际绝对路径，不要从业务项目猜测源码仓库的位置。发现已有 `.githooks` 但 `core.hooksPath` 未启用时，默认保持原状并报告命令；只有用户明确要求启用时才添加 `--enable-hooks`。
 
    ```sh
    sh /absolute/path/to/yuki-agent-kit/scripts/init-project.sh /absolute/path/to/project
    ```
 
+   ```sh
+   sh /absolute/path/to/yuki-agent-kit/scripts/init-project.sh --enable-hooks /absolute/path/to/project
+   ```
+
 4. 用户要求完整接入 kit 或安装配套 Skills 时，读取 [references/companion-skills.md](references/companion-skills.md)，安装选定的缺失 Skills。仅初始化模板的请求不需要额外安装。
-5. 对脚本新建的 `PRODUCT.md` 和 `AGENTS.md`，根据用户已提供的目标与实际项目配置填写；缺少产品信息时询问，不自行编造。已有文件仅报告缺口，未经明确要求不修改。
+5. 脚本会标记尚为占位模板的 `PRODUCT.md` 和 `AGENTS.md`。对新建文件，根据用户已提供的目标与实际项目配置填写；缺少产品信息时询问，不自行编造。已有文件仅报告缺口，未经明确要求不修改。
 6. 检查实际文件、`git diff`、hooks 配置与 Skill 安装结果，分别报告新建、保留、已安装和待处理内容。安装器创建的来源记录应保留；不要声称新安装 Skill 已在当前会话触发。
 
 ## 已有项目与更新

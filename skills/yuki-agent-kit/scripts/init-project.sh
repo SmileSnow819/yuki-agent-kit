@@ -3,8 +3,13 @@
 set -eu
 
 # 模板随 Skill 一起分发，初始化无需网络，也不依赖原始仓库的位置。
+enable_hooks_requested=no
+if [ "${1:-}" = "--enable-hooks" ]; then
+  enable_hooks_requested=yes
+  shift
+fi
 if [ "$#" -ne 1 ]; then
-  echo "Usage: sh $0 /path/to/project" >&2
+  echo "Usage: sh $0 [--enable-hooks] /path/to/project" >&2
   exit 1
 fi
 if [ ! -d "$1" ]; then
@@ -29,10 +34,15 @@ fi
 # 只有未配置 hooks 的普通仓库才自动启用新模板。worktree 的本地
 # Git 配置可能与主仓库共享，因此不在此更改它的 hooksPath。
 enable_hooks=yes
-if git -C "$target" config --get core.hooksPath >/dev/null 2>&1; then
+hooks_reason=
+if [ "$enable_hooks_requested" = yes ]; then
+  :
+elif git -C "$target" config --get core.hooksPath >/dev/null 2>&1; then
   enable_hooks=no
+  hooks_reason=configured
 elif [ -e "$target/.githooks" ] || [ -L "$target/.githooks" ] || [ -f "$target/.git" ]; then
   enable_hooks=no
+  hooks_reason=directory
 else
   hooks_dir=$(git -C "$target" rev-parse --git-path hooks)
   case "$hooks_dir" in
@@ -43,6 +53,7 @@ else
     case "$hook" in *.sample) continue ;; esac
     if [ -e "$hook" ] || [ -L "$hook" ]; then
       enable_hooks=no
+      hooks_reason=default-hooks
       break
     fi
   done
@@ -83,6 +94,18 @@ if [ "$enable_hooks" = yes ]; then
   git -C "$target" config --local core.hooksPath .githooks
   echo "Enabled core.hooksPath=.githooks"
 else
-  echo "Keeping existing hooks setup; core.hooksPath unchanged. Review .githooks integration manually."
+  if [ "$hooks_reason" = directory ]; then
+    echo "发现 .githooks，但当前未启用；如需启用，请运行 git config --local core.hooksPath .githooks"
+  else
+    echo "Keeping existing hooks setup; core.hooksPath unchanged. Review .githooks integration manually."
+  fi
+fi
+
+# 仅依据模板中稳定的占位行提示待填写，不猜测用户已有文件的业务含义。
+if grep -Fqx '# 产品名称' "$target/PRODUCT.md" && grep -Fqx -- '- 主要用户：' "$target/PRODUCT.md"; then
+  echo "待填写：PRODUCT.md（用户、问题、范围和产品原则）"
+fi
+if grep -Fq '在此记录 package manager、build、lint、typecheck、test 和本地运行命令。' "$target/AGENTS.md"; then
+  echo "待填写：AGENTS.md（真实项目命令和架构规则）"
 fi
 echo "Initialized project conventions in $target"

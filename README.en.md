@@ -25,6 +25,18 @@ The agent inspects the project, runs the script bundled with the skill, installs
 
 > The GitHub command uses pushed repository content. To validate unpublished changes, maintainers can replace the repository name with the absolute path to their local checkout in a temporary project.
 
+## Limited-network and offline installation
+
+`skills` clones the source repository from GitHub, so the first installation needs network access. Keep a local checkout as a cache when the network is available, then install from that directory in any target project:
+
+```sh
+git clone https://github.com/SmileSnow819/yuki-agent-kit.git ~/Developer/yuki-agent-kit-cache
+cd /path/to/target-project
+npx skills add ~/Developer/yuki-agent-kit-cache --skill yuki-agent-kit --agent codex --yes
+```
+
+A local source does not require GitHub access. When connected, run `git pull --ff-only` in the cache directory to update it. A USB drive or team-shared directory can provide the same local source.
+
 ## Existing and new projects
 
 Existing project: run the installation command above in the project root, then talk to your AI agent.
@@ -52,6 +64,14 @@ The onboarding skill bundles its script and templates, so template initializatio
 ## Existing content and updates
 
 Existing files print `Keeping existing` and are skipped, preserving their contents and permissions. Existing companion skills with matching names are also kept. If hooks configuration, default Git hooks, a `.githooks/` directory, or a worktree already exists, hooks configuration is not switched automatically; the agent reports pending integration. Ordinary repositories without existing hooks enable `.githooks/`.
+
+If a project already has `.githooks` but Git has not enabled it, the script prints:
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+When the user explicitly requests activation, the agent can use the initialization script's `--enable-hooks` option. Newly created `PRODUCT.md` and `AGENTS.md` files that still contain default placeholders are reported as needing input at the end of initialization.
 
 The installer maintains skill sources and update records. You can ask the agent to check for updates; updating a skill does not automatically update files already copied into the project. Reinitialization only fills missing files. Changes to existing product context, rules, and hooks require separate review.
 

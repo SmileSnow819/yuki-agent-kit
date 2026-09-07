@@ -24,7 +24,7 @@ function fixture(t) {
     assert.equal(result.status, 0, result.stderr);
     return result.stdout.trim();
   };
-  const run = (entry = script, destination = target) => spawnSync('sh', [entry, destination], { env, encoding: 'utf8' });
+  const run = (entry = script, ...args) => spawnSync('sh', [entry, ...(args.length ? args : [target])], { env, encoding: 'utf8' });
   return { dir, target, env, git, run };
 }
 
@@ -78,8 +78,27 @@ test('已有默认 Git hook 时不切换 hooksPath', t => {
 test('既有 .githooks 目录不会被意外激活', t => {
   const { target, env, run } = fixture(t);
   mkdirSync(join(target, '.githooks'));
-  assert.equal(run().status, 0);
+  const result = run();
+  assert.equal(result.status, 0);
   assert.equal(spawnSync('git', ['-C', target, 'config', '--get', 'core.hooksPath'], { env }).status, 1);
+  assert.match(result.stdout, /发现 \.githooks，但当前未启用；如需启用，请运行 git config --local core\.hooksPath \.githooks/);
+});
+
+test('显式 --enable-hooks 才启用已有 .githooks', t => {
+  const { target, git, run } = fixture(t);
+  mkdirSync(join(target, '.githooks'));
+  const result = run(script, '--enable-hooks', target);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(git('config', '--get', 'core.hooksPath'), '.githooks');
+  assert.match(result.stdout, /Enabled core\.hooksPath=\.githooks/);
+});
+
+test('空白 PRODUCT 和 AGENTS 模板会在结束时标记待填写', t => {
+  const { run } = fixture(t);
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /待填写：PRODUCT\.md/);
+  assert.match(result.stdout, /待填写：AGENTS\.md/);
 });
 
 test('保留断开的文件符号链接，不沿目录符号链接写入外部', t => {

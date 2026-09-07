@@ -25,6 +25,18 @@ AI 会读取项目现状、运行 Skill 自带脚本、安装缺失的配套 Ski
 
 > GitHub 命令使用已推送的仓库内容。维护者验证尚未推送的改动时，在临时项目中把仓库名替换成本地检出的绝对路径。
 
+## 弱网与离线安装
+
+`skills` 从 GitHub 克隆来源仓库；首次安装仍需要网络。网络稳定时可以保留一个本地检出作为缓存，之后在任何目标项目中从该目录安装：
+
+```sh
+git clone https://github.com/SmileSnow819/yuki-agent-kit.git ~/Developer/yuki-agent-kit-cache
+cd /path/to/target-project
+npx skills add ~/Developer/yuki-agent-kit-cache --skill yuki-agent-kit --agent codex --yes
+```
+
+本地来源不需要 GitHub 网络。联网后可在缓存目录运行 `git pull --ff-only` 获取更新；用户也可以从 U 盘或团队共享目录提供该本地来源。
+
 ## 已有项目与新项目
 
 已有项目：在项目根目录执行上述安装命令，再与 AI 对话。
@@ -52,6 +64,14 @@ npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex 
 ## 已有内容与更新
 
 已有文件会输出 `Keeping existing` 并跳过，内容和权限保持不变。同名配套 Skill 也会保留。已有 hooks 配置、默认 Git hooks、`.githooks/` 目录或 worktree 时，不自动切换 hooks 配置；AI 会报告待集成内容。无既有 hooks 的普通仓库会启用 `.githooks/`。
+
+如果项目已有 `.githooks`，但 Git 尚未启用它，脚本会明确提示：
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+用户明确要求启用时，AI 可以执行初始化脚本的 `--enable-hooks` 选项。新建但仍是默认占位内容的 `PRODUCT.md`、`AGENTS.md` 会在初始化结束时标为“待填写”。
 
 Skill 来源和更新记录由安装器维护。可以让 AI 检查更新；更新 Skill 不会自动更新已经复制到项目中的文件。再次初始化只补齐缺失内容，已有产品说明、规则和 hooks 的改动需要单独审查。
 
