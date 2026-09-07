@@ -9,10 +9,10 @@
 在目标项目根目录执行，安装接入 Skill：
 
 ```sh
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
-按提示选择正在使用的 AI 工具。默认安装到当前项目；只想安装到 Codex 时可添加 `--agent codex`。需要 Node.js 22.20.0 或更新版本、npm 和 Git（验证使用 `skills@1.5.24`）。无需克隆本仓库、安装全局 `yuki` 命令或发布同名 npm 包；这里使用的是 [skills 安装器](https://github.com/vercel-labs/skills)。
+这会安装到当前项目的 `.agents/skills/yuki-agent-kit/`，它是 Codex 的项目级 Skill 目录。安装器把 Codex 列在 “Universal (`.agents/skills`)” 下是正常行为，不会安装其它 AI 工具。需要 Node.js 22.20.0 或更新版本、npm 和 Git（验证使用 `skills@1.5.24`）。无需克隆本仓库、安装全局 `yuki` 命令或发布同名 npm 包；这里使用的是 [skills 安装器](https://github.com/vercel-labs/skills)。
 
 在该项目的 AI 会话中发送（若新 Skill 未显示，重新打开会话）：
 
@@ -34,7 +34,7 @@ AI 会读取项目现状、运行 Skill 自带脚本、安装缺失的配套 Ski
 ```sh
 mkdir my-app
 cd my-app
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
 告诉 AI 产品目标、用户和技术栈，它会依据你提供的信息完善新建模板；目录尚无 Git 仓库时，初始化脚本会执行 `git init`。

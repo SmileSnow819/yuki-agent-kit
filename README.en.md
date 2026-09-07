@@ -9,10 +9,10 @@ Let an AI agent add product context, Agent rules, decision records, Git Hooks, a
 Run this in the target project root to install the onboarding skill:
 
 ```sh
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
-Select your AI tool when prompted. Installation is project-local by default; add `--agent codex` to target Codex only. Requires Node.js 22.20.0 or later, npm, and Git (validated with `skills@1.5.24`). You do not need to clone this repository, install a global `yuki` command, or publish an npm package with this name; this uses the [skills installer](https://github.com/vercel-labs/skills).
+This installs to `.agents/skills/yuki-agent-kit/` in the current project, which is Codex's project-local Skill directory. The installer lists Codex under “Universal (`.agents/skills`)”; this is expected and does not install another AI tool. Requires Node.js 22.20.0 or later, npm, and Git (validated with `skills@1.5.24`). You do not need to clone this repository, install a global `yuki` command, or publish an npm package with this name; this uses the [skills installer](https://github.com/vercel-labs/skills).
 
 Send this in the project's AI session (reopen the session if the new skill is not visible):
 
@@ -34,7 +34,7 @@ New project: create and enter an empty directory, then run the same installation
 ```sh
 mkdir my-app
 cd my-app
-npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit
+npx skills add SmileSnow819/yuki-agent-kit --skill yuki-agent-kit --agent codex --yes
 ```
 
 Tell the agent the product goal, users, and technology stack so it can fill in newly created templates using your information. The initialization script runs `git init` if the directory has no Git repository.
