@@ -1,9 +1,11 @@
 #!/bin/sh
 
+# commit-msg 只做快速、确定的格式校验，不运行构建或测试。
 commit_msg_file="$1"
 commit_msg=$(cat "$commit_msg_file")
 
 if echo "$commit_msg" | grep -qiE '^Merge'; then
+  # 合并提交由 Git 生成，保留 Git 自己的提交信息格式。
   exit 0
 fi
 
@@ -21,6 +23,7 @@ if ! echo "$commit_msg" | grep -qE "$pattern"; then
 fi
 
 subject=$(echo "$commit_msg" | sed -E 's/^[^:]+: //')
+# 团队提交主题约定使用中文，便于统一查看历史。
 if ! printf '%s' "$subject" | grep -q '[一-龥]'; then
   echo ""
   echo "✖ commit message 主题必须使用中文"
